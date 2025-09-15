@@ -1,0 +1,18 @@
+Linear Regression Results
+==============================
+
+Training examples: 50
+Learning rate: 0.07
+Iterations: 1500
+
+Parameters after convergence:
+theta0 (intercept): 0.750150
+theta1 (slope): 0.063883
+
+Model equation: h(x) = 0.750 + 0.064x
+
+Predictions:
+Age 3.5 years -> Height 0.974 meters
+Age 7.0 years -> Height 1.197 meters
+
+Final cost: 0.000987
