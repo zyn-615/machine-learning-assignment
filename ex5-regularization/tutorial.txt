@@ -1,0 +1,421 @@
+Experiment 5: Regularization
+
+November 9, 2018
+
+1 Description
+
+In this exercise, you will implement regularized linear regression and regularized
+logistic regression.
+
+2 Data
+
+To begin, download ex5Data.zip and extract the ﬁles from the zip ﬁle. This data
+bundle contains two sets of data, one for linear regression and the other for logistic
+regression. It also includes a helper function named “map feature.m” which will
+be used for logistic regression. Make sure that this function’s m-ﬁle is placed in
+the same working directory where you plan to write your code.
+
+3 Regularized Linear Regression
+
+The ﬁrst part of this exercise focuses on regularized linear regression and the
+normal equations. Load the data ﬁles “ex5Linx.dat” and “ex5Liny.dat” into your
+program. These correspond to the “x” and “y” variables that you will start out
+with. Notice that in this data, the input “x” is a single feature, so you can plot y
+as a function of x on a 2-dimensional graph (try it yourself): From
+
+1
+
+looking at this plot, it seems that ﬁtting a straight line might be too simple of
+an approximation. Instead, we will try ﬁtting a higher-order polynomial to the
+data to capture more of the variations in the points.
+
+Let’s try a ﬁfth-order polynomial. Our hypothesis will be
+
+hθ(x) = θ0 + θ1x + θ2x2 + θ3x3 + θ4x4 + θ5x5
+
+This means that we have a hypothesis of six features, because x0, x1, . . . x5 are
+now all features of our regression. Notice that even though we are producing a
+polynomial ﬁt, we still have a linear regression problem because the hypothesis
+is linear in each feature.
+
+Since we are ﬁtting a 5th-order polynomial to a data set of only 7 points,
+over-ﬁtting is likely to occur. To guard against this, we will use regularization
+in our model. Recall that in regularization problems, the goal is to minimize
+the following cost function with respect to θ:
+
+J(θ) =
+
+1
+2m
+
+
+
+
+
+m
+(cid:88)
+
+i=1
+
+(hθ(x(i)) − y(i))2 + λ
+
+
+
+θ2
+j
+
+
+
+n
+(cid:88)
+
+j=1
+
+where λ is the regularization parameter. The regularization parameter λ is a
+control on your ﬁtting parameters. As the magnitues of the ﬁtting parameters
+increase, there will be an increasing penalty on the cost function. This penalty
+is dependent on the squares of the parameters as well as the magnitude of λ.
+Also, notice that the summation after λ does not include θ2
+0.
+
+Now we will ﬁnd the best parameters of our model using the normal equa-
+tions. Recall that the normal equations solution to regularized linear regression
+is
+
+
+
+0
+
+
+
+θ = (X T X + λ
+
+
+
+
+
+
+1
+
+. . .
+
+)−1X T (cid:126)y
+
+
+
+
+
+
+1
+
+The matrix following λ is an (n + 1) × (n + 1) diagonal matrix with a zero in
+the upper left and ones down the other diagonal entries. (Remember that n is
+the number of features, not counting the intecept term). The vector (cid:126)y and the
+matrix X have the same deﬁnition they had for unregularized regression.
+
+Using this equation, ﬁnd values for θ using the three regularization
+
+parameters below:
+
+a λ = 0 (this is the same case as non-regularized linear regression)
+
+b λ = 1
+
+c λ = 10
+
+As you are implementing your program, keep in mind that X is an m × (n + 1)
+matrix, because there are m training examples and n features, plus an x0 = 1
+intercept term. In the data provided for this exercise, you were only give the
+ﬁrst power of x. You will need to include the other powers of x in your feature
+vector X, which means that the ﬁrst column will contain all ones, the next
+column will contain the ﬁrst powers, the next column will contain the second
+powers, and so on. You can do this in Matlab/Octave with the command
+
+2
+
+x = [ ones (m, 1 ) , x , x . 2 , x . 3 , x . 4 , x . 5 ] ;
+
+In addition to listing the values for each element θj of the θ vector, we will also
+provide the L2-norm of θ so you can quickly check if your answer is correct.
+In Matlab/Octave, you can calculate the L2-norm of a vector x using the com-
+mand norm(x). Also, plot the polyomial ﬁt for each value of λ. You will get
+plots similar to the following ﬁgures. From looking at these graphs, what
+
+conclusions can you make about how the regularization parameter λ
+aﬀects your model?
+
+4 Regularized Logistic Regression
+
+In this 2nd part of the exercise, you will implement regularized logistic regression
+using Newton’s Method. To begin, load the ﬁles “ex5Logx.dat” and “ex5Logy.dat”
+into your program. This dataset represents the training set of a logistic regression
+problem with two features. To avoid confusion later, we will refer to the two
+input features contained in “ex5Logx.dat” as u and v. So in the “ex5Logx.dat”
+ﬁle, the ﬁrst column of numbers represents the feature u, which you will plot on
+the horizontal axis, and the second feature represents v, which you will plot on
+the vertical axis.
+
+After loading the data, plot the points using diﬀerent markers to distinguish
+
+between the two classiﬁcations. The commands in Matlab/Octave will be:
+
+x = load ( ’ ex5Logx . dat ’ ) ;
+y = load ( ’ ex5Logy . dat ’ ) ;
+figure
+% Find t h e i n d i c e s
+pos = find ( y ) ; neg = find ( y == 0 ) ;
+plot ( x ( pos , 1 ) , x ( pos , 2 ) ,
+hold on
+plot ( x ( neg , 1 ) , x ( neg , 2 ) ,
+
+’+ ’ )
+
+’ o ’ )
+
+f o r
+
+t h e 2 c l a s s e s
+
+After plotting your image, it should look something like this:
+
+We will now ﬁt a regularized regression model to this data. Recall that in
+
+logistic regression, the hypothesis function is
+
+hθ(x) = g(θT x) =
+
+1
+1 + e−θT x
+
+= P (y = 1|x; θ)
+
+In this exercise, we will assign x to be all monomials (meaning polynomial
+
+3
+
+terms) of u and v up to the sixth power:
+
+x =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1
+u
+v
+u2
+uv
+v2
+u3
+.
+.
+.
+uv5
+v6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+To clarify this notation: we have made a 28-feature vector x where x0 = 1, x1 =
+u, x2 = v, . . . x28 = v6. Remember that u was the ﬁrst column of numbers in your
+“ex5Logx.dat” ﬁle and v was the second column. From now on, we will just refer
+to the entries of x as x0, x1, and so on instead of their values in terms of u and v.
+To save you the trouble of enumerating all the terms of x, we’ve included a
+Matlab/Octave helper function named “map feature” that maps the original
+inputs to the feature vector. This function works for a single training example as
+well as for an entire training. To use this function, place “map feature.m ”in your
+working directory and call
+
+x = m a p f e a t u r e ( u , v )
+
+This assumes that the two original features were stored in column vectors named
+“u” and “v”. If you had only one training example, each column vector would
+be a scalar. The function will output a new feature array stored in the variable
+“x”. Of course, you can use any names you’d like for the arguments and the
+output. Just make sure your two arguments are column vectors of the same
+size.
+
+Before building this model, recall that our objective is to minimize the cost
+
+4
+
+function in regularized logistic regression:
+
+J(θ) = −
+
+1
+m
+
+m
+(cid:88)
+
+[y(i) log(hθ(x(i))) + (1 − y(i)) log(1 − hθ(x(i)))] +
+
+i=1
+
+λ
+2m
+
+n
+(cid:88)
+
+j=1
+
+θ2
+j
+
+Notice that this looks like the cost function for unregularized logistic regression,
+except that there is a regularization term at the end. We will now minimize
+this function using Newton’s method.
+
+Recall that the Newton’s Method update rule is
+
+θ(t+1) = θ(t) − H −1∇θJ
+
+This is the same rule that you used for unregularized logistic regression in Exercise
+4. But because you are now implementing regularization, the gradient ∇
+
+θ(J) and the Hessian H have diﬀerent forms:
+
+Notice that if you substitute λ = 0 into these expressions, you will see the
+same formulas as unregularized logistic regression. Also, remember that in these
+formulas,
+
+1. x(i) is your feature vector, which is a 28x1 vector in this exercise.
+
+2. ∇θJ is a 28×1 vector.
+
+3. x(i)(x(i))T and H are 28x28 matrices.
+
+4. y(i) and hθ(x(i)) are scalars.
+
+5. The matrix following λ
+
+m in the Hessian formula is a 28x28 diagonal matrix
+
+with a zero in the upper left and ones on every other diagonal entry.
+
+Now run Newton’s Method on this dataset using the three values of lambda
+
+below:
+
+a λ = 0 (this is the same case as non-regularized linear regression)
+
+b λ = 1
+
+5
+
+c λ = 10
+
+To determine whether Newton’s Method has converged, it may help to print
+out the value of J(θ) during each iteration. J(θ) should not be decreasing at
+any point during Newton’s Method. If it is, check that you have deﬁned J(θ)
+correctly. Also check your deﬁnitions of the gradient and Hessian to make sure
+there are no mistakes in the regularization parts.
+
+After convergence, use your values of theta to ﬁnd the decision boundary in
+the classiﬁcation problem. The decision boundary is deﬁned as the line where
+
+P (y = 1|x; θ) = 0.5
+
+=⇒ θT x = 0
+
+Plotting the decision boundary here will be trickier than plotting the best-ﬁt
+curve in linear regression. You will need to plot the θT x = 0 line implicity, by
+plotting a contour. This can be done by evaluating θT x over a grid of points
+representing the original u and v inputs, and then plotting the line where θT x
+evaluates to zero.
+
+The plot implementation for Matlab/Octave is given below. To get the best
+
+viewing results, use the same plotting ranges that we use here.
+
+% D e f i n e t h e r a n g e s o f
+u = linspace ( −1 , 1 . 5 , 2 0 0 ) ;
+v = linspace ( −1 , 1 . 5 , 2 0 0 ) ;
+
+t h e g r i d
+
+% I n i t i a l i z e s p a c e f o r
+z = zeros ( length ( u ) ,
+
+length ( v ) ) ;
+
+t h e v a l u e s
+
+t o be p l o t t e d
+
+% E v a l u a t e z = t h e t a ∗ x o v e r t h e g r i d
+f o r i = 1 : length ( u )
+
+f o r j = 1 : length ( v )
+
+% N o t i c e t h e o r d e r o f
+z ( j , i ) = m a p f e a t u r e ( u ( i ) , v ( j ) ) ∗ t h e t a ;
+
+i h e r e !
+
+j ,
+
+end
+
+end
+
+t h e way t h a t c o n t o u r p l o t t i n g works
+
+% Because o f
+% i n Matlab , we need t o t r a n s p o s e z , or
+% e l s e t h e a x i s o r i e n t a t i o n w i l l be f l i p p e d !
+z = z ’
+% P l o t z = 0 by s p e c i f y i n g t h e range [ 0 , 0 ]
+contour ( u , v , z ,
+
+’ LineWidth ’ , 2 )
+
+[ 0 , 0 ] ,
+
+When you are ﬁnished, your plots for the three values of λ should look similar
+to the ones below.
+
+Finally, because there are 28 elements θ, we will not provide an element-by-
+element comparison in the solutions. Instead, use norm(theta) to calculate the
+L2-norm of θ, and check it against the norm in the solutions. How does λ
+aﬀect the results?
+
+6
+
+7
+
+
